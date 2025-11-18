@@ -1,0 +1,23 @@
+import pandas as pd
+
+# Sample dataset (you can replace with pd.read_csv('data.csv'))
+data = pd.DataFrame([
+    ['Sunny','Warm','Normal','Strong','Warm','Same','Yes'],
+    ['Sunny','Warm','High','Strong','Warm','Same','Yes'],
+    ['Rainy','Cold','High','Strong','Warm','Change','No'],
+    ['Sunny','Warm','High','Strong','Cool','Change','Yes']
+], columns=['Sky','AirTemp','Humidity','Wind','Water','Forecast','EnjoySport'])
+
+def foil(df, target):
+    pos = df[df[target]=='Yes']; neg = df[df[target]=='No']
+    rules = []
+    for col in df.columns[:-1]:
+        vals = pos[col].unique()
+        for v in vals:
+            p, n = len(pos[pos[col]==v]), len(neg[neg[col]==v])
+            if p>0 and n==0: rules.append(f"If {col}={v} THEN {target}=Yes")
+    return rules
+
+rules = foil(data, 'EnjoySport')
+print("Generated Classification Rules:")
+for r in rules: print(r)
