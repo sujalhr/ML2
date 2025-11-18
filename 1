@@ -1,0 +1,29 @@
+import pandas as pd
+
+data = pd.DataFrame([
+    ['Sunny','Warm','Normal','Strong','Warm','Same','Yes'],
+    ['Sunny','Warm','High','Strong','Warm','Same','Yes'],
+    ['Rainy','Cold','High','Strong','Warm','Change','No'],
+    ['Sunny','Warm','High','Strong','Cool','Change','Yes']
+], columns=['Sky','AirTemp','Humidity','Wind','Water','Forecast','EnjoySport'])
+
+def find_s(df):
+    pos = df[df['EnjoySport']=='Yes'].iloc[:, :-1].values
+    h = pos[0].copy()
+    for i in pos: 
+        for j in range(len(h)): 
+            if h[j]!=i[j]: h[j]='?'
+    return h
+
+def candidate_elimination(df):
+    attr = df.columns[:-1]; G = [['?']*len(attr)]; S = find_s(df).tolist()
+    for i,r in df.iterrows():
+        if r[-1]=='No':
+            for j in range(len(attr)):        
+                if S[j]!='?' and S[j]!=r[j]: G.append(S.copy()); G[-1][j]='?'
+    return S,G
+
+S,G = candidate_elimination(data)
+print("Most Specific Hypothesis:", S)
+print("Most General Hypotheses:", G)
+
