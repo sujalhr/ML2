@@ -1,39 +1,17 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_wine
 from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.metrics import mean_squared_error
-import numpy as np
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
-# Load dataset without target column
-iris = load_iris()
-X = pd.DataFrame(iris.data, columns=iris.feature_names)
+X = load_wine().data
+X = StandardScaler().fit_transform(X)
 
-# KMeans clustering
-k = 3
-kmeans = KMeans(n_clusters=k, random_state=42)
-clusters = kmeans.fit_predict(X)
+kmeans = KMeans(n_clusters=3, random_state=42).fit(X)
+labels = kmeans.labels_
 
-# Calculate MSE manually
-centroids = kmeans.cluster_centers_
-mse = mean_squared_error(X, centroids[clusters])
-print(f"Mean Squared Error (MSE): {mse:.4f}")
-
-# Visualize clusters using PCA
-pca = PCA(n_components=2)
-X_reduced = pca.fit_transform(X)
-
-plt.figure(figsize=(8, 6))
-for cluster_id in range(k):
-    plt.scatter(X_reduced[clusters == cluster_id, 0],
-                X_reduced[clusters == cluster_id, 1],
-                label=f'Cluster {cluster_id}')
-
-plt.title("K-Means Clustering (using pca)")
-plt.xlabel("PCA Component 1")
-plt.ylabel("PCA Component 2")
-plt.legend()
-plt.grid(True)
+plt.scatter(X[:,0], X[:,1], c=labels, cmap='viridis')
+plt.title("K-Means Clustering (Wine Dataset)")
+plt.xlabel("Feature 1"); plt.ylabel("Feature 2")
 plt.show()
 
+print("Cluster Centers:\n", kmeans.cluster_centers_)
