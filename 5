@@ -1,0 +1,38 @@
+!pip install minisom
+
+from sklearn import datasets
+from minisom import MiniSom
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Step 1: Load the Iris dataset
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+# Step 2: Normalize the data (important for SOM)
+data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
+
+# Step 3: Initialize and train the SOM
+som_size = 7  # 7x7 grid
+som = MiniSom(som_size, som_size, data.shape[1], sigma=1.0, learning_rate=0.5)
+som.random_weights_init(data)
+print("Training SOM...")
+som.train_random(data, 100)  # Train with 100 iterations
+
+# Step 4: Visualize the SOM distance map (U-Matrix)
+plt.figure(figsize=(7, 7))
+plt.pcolor(som.distance_map().T, cmap='bone_r')  # Distance map as background
+plt.colorbar(label='Distance')
+
+# Plot each data point on the map
+markers = ['o', 's', 'D']
+colors = ['r', 'g', 'b']
+
+for i, x in enumerate(data):
+    w = som.winner(x)  # Get the winning node
+    plt.plot(w[0] + 0.5, w[1] + 0.5, markers[target[i]], markerfacecolor='None',
+             markeredgecolor=colors[target[i]], markersize=12, markeredgewidth=2)
+
+plt.title('SOM on Iris Dataset')
+plt.show()
