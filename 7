@@ -1,0 +1,10 @@
+from sklearn.datasets import load_iris
+import numpy as np
+
+X, y = load_iris(return_X_y=True)
+cond = X[:,0] < 5.0               # event E: SepalLength < 5
+pE = np.mean(cond)                # P(E)
+pCE = np.mean(y[cond] == 0)       # P(Class=Setosa | E)
+likelihood = pCE * pE             # P(E , Class)
+print("P(E) =", pE, " P(Class|E) =", pCE, " Likelihood =", likelihood)
+
