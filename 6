@@ -1,0 +1,10 @@
+import random, numpy as np
+def urand():
+    return random.random()        # uniform [0,1]
+f = lambda x: x**2                # function
+samples = [urand() for _ in range(10)]   # 10 random x
+values = [f(x) for x in samples]         # f(x) for each
+I = np.mean(values) * 1           # interval length = 1
+print("Samples:", samples)
+print("f(x):", values)
+print("Estimated Integral:", I)
